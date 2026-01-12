@@ -94,7 +94,7 @@ withDefaults(
                                     <Link 
                                         v-if="canRegister"
                                         :href="register()"
-                                        class="flex-1 border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"
+                                        class="flex-1 border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center text-white"
                                     >
                                         Register
                                     </Link>
