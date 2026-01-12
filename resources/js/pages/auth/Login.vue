@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { register } from '@/routes';
+import { home } from '@/routes/index';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head } from '@inertiajs/vue3';
@@ -98,12 +99,22 @@ defineProps<{
                 </Button>
             </div>
 
-            <div
-                class="text-center text-sm text-muted-foreground"
-                v-if="canRegister"
-            >
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            <div class="text-center">
+                <div class="space-y-2 text-center">
+                    <!-- Home TextLink -->
+                    <TextLink :href="home()">Home</TextLink>
+
+                    <!-- Sign up TextLink BELOW Home -->
+                    <div
+                        class="text-sm text-muted-foreground"
+                        v-if="canRegister"
+                    >
+                        Don't have an account?
+                        <TextLink :href="register()" :tabindex="5">
+                            Sign up
+                        </TextLink>
+                    </div>
+                </div>
             </div>
         </Form>
     </AuthBase>
