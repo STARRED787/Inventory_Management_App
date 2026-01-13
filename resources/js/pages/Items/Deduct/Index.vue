@@ -9,7 +9,7 @@ interface Item {
     name: string;
     unit: string;
     quantity: number;
-    addQuantity?: number; // input for adding quantity
+    deductQuantity?: number; // input for deducting quantity
 }
 
 const items = ref<Item[]>([]);
@@ -20,10 +20,10 @@ const flash = ref<{ success?: string; error?: string }>({});
 // Fetch items from Laravel GET route
 const fetchItems = async () => {
     try {
-        const response = await axios.get<Item[]>('/get-items');
+        const response = await axios.get<Item[]>('/get-items'); // same route
         items.value = response.data.map((item) => ({
             ...item,
-            addQuantity: 0,
+            deductQuantity: 0,
         }));
     } catch (error) {
         console.error('Failed to fetch items:', error);
@@ -37,37 +37,38 @@ const setFlash = (type: 'success' | 'error', message: string) => {
     }, 3000);
 };
 
-// Save all quantities at once
-const saveAllQuantities = async () => {
+// Deduct all quantities at once
+const deductAllQuantities = async () => {
     try {
         const updates = items.value
-            .filter(item => item.addQuantity && item.addQuantity > 0)
+            .filter(item => item.deductQuantity && item.deductQuantity > 0)
             .map(item => ({
                 id: item.id,
-                addQuantity: item.addQuantity
+                deductQuantity: item.deductQuantity
             }));
 
         if (updates.length === 0) {
-            setFlash('error', 'No quantities to update!');
+            setFlash('error', 'No quantities to deduct!');
             return; // stop here
         }
 
-        await axios.post('/update-multiple-quantities', { updates });
+        await axios.post('/deduct-multiple-quantities', { updates });
 
         // Update local quantities
         updates.forEach(update => {
             const item = items.value.find(i => i.id === update.id);
             if (item) {
-                item.quantity += update.addQuantity!;
-                item.addQuantity = 0;
+                item.quantity -= update.deductQuantity!;
+                if (item.quantity < 0) item.quantity = 0; // prevent negative
+                item.deductQuantity = 0;
             }
         });
 
-        setFlash('success', 'All quantities updated successfully!');
+        setFlash('success', 'All quantities deducted successfully!');
 
     } catch (error) {
-        console.error('Failed to update quantities:', error);
-        setFlash('error', 'Failed to update quantities.');
+        console.error('Failed to deduct quantities:', error);
+        setFlash('error', 'Failed to deduct quantities.');
     }
 };
 
@@ -96,7 +97,7 @@ onMounted(() => {
                 {{ flash.error }}
             </div>
 
-            <h2 class="text-xl font-semibold">Welcome to Deduct Items</h2>
+            <h2 class="text-xl font-semibold">Deduct Items</h2>
 
             <!-- Items Table -->
             <div class="mt-4 overflow-x-auto">
@@ -106,12 +107,8 @@ onMounted(() => {
                             <th class="border px-4 py-2 text-black">ID</th>
                             <th class="border px-4 py-2 text-black">Name</th>
                             <th class="border px-4 py-2 text-black">Unit</th>
-                            <th class="border px-4 py-2 text-black">
-                                Quantity
-                            </th>
-                            <th class="border px-4 py-2 text-black">
-                                Add Quantity
-                            </th>
+                            <th class="border px-4 py-2 text-black">Quantity</th>
+                            <th class="border px-4 py-2 text-black">Deduct Quantity</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,14 +120,13 @@ onMounted(() => {
                             <td class="border px-4 py-2">{{ item.id }}</td>
                             <td class="border px-4 py-2">{{ item.name }}</td>
                             <td class="border px-4 py-2">{{ item.unit }}</td>
-                            <td class="border px-4 py-2">
-                                {{ item.quantity }}
-                            </td>
+                            <td class="border px-4 py-2">{{ item.quantity }}</td>
                             <td class="border px-4 py-2">
                                 <input
                                     type="number"
-                                    v-model.number="item.addQuantity"
+                                    v-model.number="item.deductQuantity"
                                     min="0"
+                                    :max="item.quantity"
                                     class="w-20 border px-2 py-1"
                                 />
                             </td>
@@ -147,13 +143,13 @@ onMounted(() => {
                 </table>
             </div>
 
-            <!-- Save All Button -->
+            <!-- Deduct All Button -->
             <div class="mt-4">
                 <button
-                    @click="saveAllQuantities"
-                    class="rounded bg-green-500 px-4 py-2 text-white"
+                    @click="deductAllQuantities"
+                    class="rounded bg-red-500 px-4 py-2 text-white"
                 >
-                    Save All Quantities
+                    Deduct All Quantities
                 </button>
             </div>
         </div>

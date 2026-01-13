@@ -35,5 +35,11 @@ Route::post('/update-multiple-quantities', [AddItemsController::class, 'updateMu
 
 //Deduct item page 
 Route::get('/items/deduct', [DeductItemsController::class, 'index'])->name('items.deduct');
+
+//Get Deduct items page to items table data
+Route::get('/get-items', [DeductItemsController::class, 'get']);
+
+//Get Frontend update quantities data in Deduct iems page
+Route::post('/deduct-multiple-quantities', [DeductItemsController::class, 'updateMultipleQuantities']);
 });
 require __DIR__.'/settings.php';
