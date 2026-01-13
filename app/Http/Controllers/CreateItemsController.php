@@ -16,24 +16,16 @@ class CreateItemsController extends Controller
     }
 
     // Store item data
-    public function store(Request $request)
+     public function store(Request $request)
     {
-        // Validate input
-        $request->validate([
+        $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'unit'     => 'required|in:kg,m,cm,pcs',
             'quantity' => 'required|numeric|min:0',
         ]);
 
-        // Store data
-        Item::create([
-            'name'     => $request->name,
-            'unit'     => $request->unit,
-            'quantity' => $request->quantity,
-        ]);
+        Item::create($validated);
 
-        // Redirect with success message
-        return redirect()->route('items.create')
-                         ->with('success', 'Item created successfully!');
+        return redirect()->route('items.create');
     }
 }
