@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class InventoryTransaction extends Model
 {
     use HasFactory;
-
+    protected $table = 'items_transactions';
     protected $fillable = [
         'item_id',
         'type',
