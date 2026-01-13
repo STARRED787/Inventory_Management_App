@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddItemsController;
 use App\Http\Controllers\CreateItemsController;
+use App\Http\Controllers\DeductItemsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -31,6 +32,8 @@ Route::get('/get-items', [AddItemsController::class, 'get']);
 
 //Get Frontend update quantities data in add iems page
 Route::post('/update-multiple-quantities', [AddItemsController::class, 'updateMultipleQuantities']);
-  
+
+//Deduct item page 
+Route::get('/items/deduct', [DeductItemsController::class, 'index'])->name('items.deduct');
 });
 require __DIR__.'/settings.php';

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { createItem } from '@/page-routes/create-item';
+import { DeductItem } from '@/page-routes/deduct-item';
 import { addItem } from '@/page-routes/add-item';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
@@ -32,7 +33,7 @@ const mainNavItems: NavItem[] = [
     },
             {
         title: 'Deduct Items',
-        href: dashboard(),
+        href: DeductItem(),
         icon: ArrowUpFromLine,
     },
                 {
