@@ -17,9 +17,11 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Show form
-  Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
+    //Create item page 
+Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
 
+//create iteme store table
+Route::post('/items/store', [CreateItemsController::class, 'store'])->name('items.store');
     
 });
 require __DIR__.'/settings.php';
