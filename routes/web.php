@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreateItemsController;
 use App\Http\Controllers\items_controller;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,5 +16,10 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('items', items_controller::class);
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Show form
+  Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
+
+    
+});
 require __DIR__.'/settings.php';
