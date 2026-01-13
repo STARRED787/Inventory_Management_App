@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { createItem } from '@/page-routes/create-item';
-
+import { addItem } from '@/page-routes/add-item';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, PackagePlus,ArrowDownToLine, ArrowUpFromLine,History } from 'lucide-vue-next';
@@ -32,7 +32,7 @@ const mainNavItems: NavItem[] = [
     },
         {
         title: 'Add Items',
-        href: dashboard(),
+        href: addItem(),
         icon: ArrowDownToLine,
     },
             {

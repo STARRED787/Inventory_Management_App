@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\AddItemsController;
 use App\Http\Controllers\CreateItemsController;
-use App\Http\Controllers\items_controller;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -22,6 +22,9 @@ Route::get('/items/create', [CreateItemsController::class, 'index'])->name('item
 
 //create iteme store table
 Route::post('/items/store', [CreateItemsController::class, 'store'])->name('items.store');
-    
+
+//Add item page 
+Route::get('/items/add', [AddItemsController::class, 'index'])->name('items.add');
+  
 });
 require __DIR__.'/settings.php';
