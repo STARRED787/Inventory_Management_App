@@ -9,6 +9,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
            <h2> Welcome to Crete Items</h2>
+           new
+           
         </div>
     </AppLayout>
 </template>

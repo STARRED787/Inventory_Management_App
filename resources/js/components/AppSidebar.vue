@@ -12,7 +12,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { createItem } from '@/routes/create-item';
+import { createItem } from '@/page-routes/create-item';
+
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, PackagePlus,ArrowDownToLine, ArrowUpFromLine,History } from 'lucide-vue-next';
@@ -26,7 +27,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Create Item',
-         href: createItem(),
+        href: createItem(),
         icon: PackagePlus,
     },
         {
