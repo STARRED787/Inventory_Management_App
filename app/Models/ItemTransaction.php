@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InventoryTransaction extends Model
+class ItemTransaction extends Model
 {
     use HasFactory;
     protected $table = 'items_transactions';
