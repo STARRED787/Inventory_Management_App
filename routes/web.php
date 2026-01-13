@@ -25,6 +25,9 @@ Route::post('/items/store', [CreateItemsController::class, 'store'])->name('item
 
 //Add item page 
 Route::get('/items/add', [AddItemsController::class, 'index'])->name('items.add');
+
+//Get add items page to items table data
+Route::get('/get-items', [AddItemsController::class, 'get']);
   
 });
 require __DIR__.'/settings.php';
