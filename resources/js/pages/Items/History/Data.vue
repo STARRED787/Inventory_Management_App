@@ -22,25 +22,20 @@ const filters = ref({
     last_7_days: false,
 });
 
-const fetchHistory = async (url: string | null = null) => {
+const fetchHistory = async () => {
     if (!props.item?.id) return;
 
     const endpoint = `/items/${props.item.id}/history/data`;
-    const response = await axios.get(endpoint, { params: filters.value });
-    console.log('Fetching from endpoint:', endpoint);
-    console.log('With filters:', filters.value);
 
     try {
-        const response = await axios.get(endpoint, { params: filters.value });
-        console.log('Response data:', response.data);
+        const response = await axios.get(endpoint, {
+            params: filters.value,
+        });
 
         transactions.value = response.data.data;
         pagination.value = response.data.pagination;
     } catch (error: any) {
-        console.error(
-            'Error fetching history:',
-            error.response ?? error.message,
-        );
+        console.error('Error fetching history:', error);
     }
 };
 
@@ -84,14 +79,22 @@ onMounted(() => {
 
             <!-- Filters (only show when item is loaded) -->
             <div v-if="item" class="flex flex-wrap gap-4">
-                <select v-model="filters.type" class="border p-2">
+                <select v-model="filters.type" class="border bg-gray-600 p-2">
                     <option value="">All</option>
                     <option value="add">Add</option>
                     <option value="deduct">Deduct</option>
                 </select>
 
-                <input type="date" v-model="filters.from" class="border p-2" />
-                <input type="date" v-model="filters.to" class="border p-2" />
+                <input
+                    type="date"
+                    v-model="filters.from"
+                    class="border bg-gray-600 p-2"
+                />
+                <input
+                    type="date"
+                    v-model="filters.to"
+                    class="border bg-gray-600 p-2"
+                />
 
                 <label class="flex items-center gap-2">
                     <input type="checkbox" v-model="filters.last_7_days" />

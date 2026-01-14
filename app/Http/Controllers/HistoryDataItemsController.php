@@ -20,12 +20,10 @@ class HistoryDataItemsController extends Controller
     }
 
     // Fetch transactions for history table
-    public function fetch(Request $request)
+    public function fetch(Request $request, Item $item)
     {
-        $itemId = $request->query('item_id'); // get item id from query string
-        $item = Item::findOrFail($itemId);
 
-        $query = ItemTransaction::where('item_id', $itemId)->orderBy('created_at', 'desc');
+        $query = ItemTransaction::where('item_id', $item->id)->orderBy('created_at', 'desc');
 
         // Filters
         if ($request->filled('type')) {
