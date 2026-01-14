@@ -13,8 +13,8 @@ class Item extends Model
     /**
      * Transactions related to this item
      */
-    public function transactions(): HasMany
+    public function transactions()
     {
-        return $this->hasMany(ItemTransaction::class, 'item_id');
+        return $this->hasMany(ItemTransaction::class);
     }
 }

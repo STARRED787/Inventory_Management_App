@@ -16,8 +16,9 @@ class ItemTransaction extends Model
         'created_at',
     ];
 
+    // In ItemTransaction model
     public function item()
     {
-        return $this->belongsTo(Item::class, 'item_id');
+        return $this->belongsTo(Item::class);
     }
 }

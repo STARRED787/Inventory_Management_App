@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\ItemTransaction;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HistoryDataItemsController extends Controller
 {
     // Show the item page
     public function index(Request $request)
     {
-        $itemId = $request->query('item_id');
-        $item = Item::findOrFail($itemId);
+        $item = Item::findOrFail($request->query('item_id')); // from query string
 
-        return inertia('Items/History/Data', [
+        return Inertia::render('Items/History/Data', [
             'item' => $item
         ]);
     }
@@ -22,10 +22,10 @@ class HistoryDataItemsController extends Controller
     // Fetch transactions for history table
     public function fetch(Request $request)
     {
-        $itemId = $request->query('item_id');
+        $itemId = $request->query('item_id'); // get item id from query string
         $item = Item::findOrFail($itemId);
 
-        $query = ItemTransaction::where('item_id', $item->id)->orderBy('created_at', 'desc');
+        $query = ItemTransaction::where('item_id', $itemId)->orderBy('created_at', 'desc');
 
         // Filters
         if ($request->filled('type')) {
@@ -40,25 +40,19 @@ class HistoryDataItemsController extends Controller
             $query->where('created_at', '>=', now()->subDays(7));
         }
 
-        $transactions = $query->paginate(10)->withQueryString();
+        $transactions = $query->paginate(10);
 
-        // Running balance
         $balance = 0;
-        $history = collect($transactions->items())
-            ->reverse()
-            ->map(function ($tx) use (&$balance) {
-                $balance += $tx->type === 'add' ? $tx->quantity : -$tx->quantity;
-
-                return [
-                    'id' => $tx->id,
-                    'type' => $tx->type,
-                    'quantity' => $tx->quantity,
-                    'created_at' => $tx->created_at->toDateTimeString(),
-                    'balance' => $balance,
-                ];
-            })
-            ->reverse()
-            ->values();
+        $history = $transactions->map(function ($tx) use (&$balance) {
+            $balance += $tx->type === 'add' ? $tx->quantity : -$tx->quantity;
+            return [
+                'item_id' => $tx->item_id,
+                'type' => $tx->type,
+                'quantity' => $tx->quantity,
+                'created_at' => $tx->created_at->toDateTimeString(),
+                'balance' => $balance,
+            ];
+        });
 
         return response()->json([
             'data' => $history,
@@ -66,7 +60,7 @@ class HistoryDataItemsController extends Controller
                 'current_page' => $transactions->currentPage(),
                 'last_page' => $transactions->lastPage(),
                 'links' => $transactions->links()->elements,
-            ],
+            ]
         ]);
     }
 }
