@@ -15,6 +15,7 @@ import { addItem } from '@/page-routes/add-item';
 import { createItem } from '@/page-routes/create-item';
 import { DeductItem } from '@/page-routes/deduct-item';
 import { HistoryItem } from '@/page-routes/history-item';
+import { SearchItem } from '@/page-routes/search-item';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
@@ -51,7 +52,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Item Search',
-        href: HistoryItem(),
+        href: SearchItem(),
         icon: Search,
     },
 ];

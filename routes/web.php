@@ -56,6 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Data fetch to History page
     Route::get('/items/{item}/history/data', [HistoryDataItemsController::class, 'fetch'])->name('items.history.data');
+
+    //Create Search page 
+    Route::get('/items/search', [HistoryItemsController::class, 'index'])->name('items.seacrh');
 });
 
 require __DIR__ . '/settings.php';
