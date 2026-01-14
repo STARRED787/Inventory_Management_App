@@ -3,37 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\ItemTransaction;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class HistoryDataItemsController extends Controller
 {
-    public function index(Item $item)
+    // Show the item page
+    public function index(Request $request)
     {
-        return Inertia::render('Items/History/Data', [
+        $itemId = $request->query('item_id');
+        $item = Item::findOrFail($itemId);
+
+        return inertia('Items/History/Data', [
             'item' => $item
         ]);
-        // resources/js/Pages/Items/History/Index.vue
     }
 
-    public function fetch(Request $request, Item $item)
+    // Fetch transactions for history table
+    public function fetch(Request $request)
     {
-        $query = $item->transactions()->orderBy('created_at', 'desc');
+        $itemId = $request->query('item_id');
+        $item = Item::findOrFail($itemId);
 
-        // Filter: add / deduct
+        $query = ItemTransaction::where('item_id', $item->id)->orderBy('created_at', 'desc');
+
+        // Filters
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
 
-        // Filter: date range
         if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [
-                $request->from,
-                $request->to
-            ]);
+            $query->whereBetween('created_at', [$request->from, $request->to]);
         }
 
-        // Filter: last 7 days
         if ($request->boolean('last_7_days')) {
             $query->where('created_at', '>=', now()->subDays(7));
         }
@@ -45,9 +47,7 @@ class HistoryDataItemsController extends Controller
         $history = collect($transactions->items())
             ->reverse()
             ->map(function ($tx) use (&$balance) {
-                $balance += $tx->type === 'add'
-                    ? $tx->quantity
-                    : -$tx->quantity;
+                $balance += $tx->type === 'add' ? $tx->quantity : -$tx->quantity;
 
                 return [
                     'id' => $tx->id,
@@ -65,8 +65,8 @@ class HistoryDataItemsController extends Controller
             'pagination' => [
                 'current_page' => $transactions->currentPage(),
                 'last_page' => $transactions->lastPage(),
-                'links' => $transactions->links()->toHtml(),
-            ]
+                'links' => $transactions->links()->elements,
+            ],
         ]);
     }
 }

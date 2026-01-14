@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ItemTransaction;
 
 class Item extends Model
 {
-    protected $table = 'items';
-    
-    protected $fillable = [
-        'name',
-        'unit',
-        'quantity'
-    ];
+    protected $fillable = ['name', 'unit', 'quantity'];
+
+    /**
+     * Transactions related to this item
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(ItemTransaction::class, 'item_id');
+    }
 }
