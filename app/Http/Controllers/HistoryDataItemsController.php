@@ -22,7 +22,6 @@ class HistoryDataItemsController extends Controller
     // Fetch transactions for history table
     public function fetch(Request $request, Item $item)
     {
-
         $query = ItemTransaction::where('item_id', $item->id)->orderBy('created_at', 'desc');
 
         // Filters
@@ -57,8 +56,8 @@ class HistoryDataItemsController extends Controller
             'pagination' => [
                 'current_page' => $transactions->currentPage(),
                 'last_page' => $transactions->lastPage(),
-                'links' => $transactions->links()->elements,
-            ]
+                'links' => $transactions->linkCollection(),
+            ],
         ]);
     }
 }

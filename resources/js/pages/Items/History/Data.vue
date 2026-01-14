@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
+import { HistoryItem } from '@/page-routes/history-item';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { onMounted, ref, watch } from 'vue';
+
+const goBack = () => {
+    router.visit(HistoryItem());
+};
 
 // Props from Inertia (READ ONLY)
 const props = defineProps<{
@@ -21,22 +27,17 @@ const filters = ref({
     to: '',
     last_7_days: false,
 });
-
-const fetchHistory = async () => {
+const fetchHistory = async (url: string | null = null) => {
     if (!props.item?.id) return;
 
-    const endpoint = `/items/${props.item.id}/history/data`;
+    const endpoint = url ?? `/items/${props.item.id}/history/data`;
 
-    try {
-        const response = await axios.get(endpoint, {
-            params: filters.value,
-        });
+    const response = await axios.get(endpoint, {
+        params: filters.value,
+    });
 
-        transactions.value = response.data.data;
-        pagination.value = response.data.pagination;
-    } catch (error: any) {
-        console.error('Error fetching history:', error);
-    }
+    transactions.value = response.data.data;
+    pagination.value = response.data.pagination;
 };
 
 // Apply filters
@@ -66,6 +67,12 @@ onMounted(() => {
 <template>
     <AppLayout>
         <div class="space-y-6 p-6">
+            <button
+                @click="goBack"
+                class="flex items-center gap-2 rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+            >
+                Back to Items
+            </button>
             <!-- Item Summary -->
             <div v-if="item" class="rounded bg-gray-500 p-4">
                 <h2 class="text-xl font-semibold">{{ item.name }} History</h2>
@@ -159,15 +166,15 @@ onMounted(() => {
                 </table>
 
                 <!-- Pagination -->
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2 px-2 py-6">
                     <button
                         v-for="link in pagination.links"
                         :key="link.label"
                         v-html="link.label"
                         :disabled="!link.url"
                         @click="fetchHistory(link.url)"
-                        class="rounded border px-3 py-1"
-                        :class="{ 'bg-gray-300': link.active }"
+                        class="cursor:pointer rounded border px-3 py-1"
+                        :class="{ 'bg-blue-600 text-white': link.active }"
                     />
                 </div>
             </div>

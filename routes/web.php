@@ -57,4 +57,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Data fetch to History page
     Route::get('/items/{item}/history/data', [HistoryDataItemsController::class, 'fetch'])->name('items.history.data');
 });
+
 require __DIR__ . '/settings.php';
