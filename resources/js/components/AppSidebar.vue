@@ -20,8 +20,6 @@ import { Link } from '@inertiajs/vue3';
 import {
     ArrowDownToLine,
     ArrowUpFromLine,
-    BookOpen,
-    Folder,
     History,
     PackagePlus,
     Search,
@@ -53,19 +51,6 @@ const mainNavItems: NavItem[] = [
         title: 'Item Search',
         href: SearchItem(),
         icon: Search,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ];
 </script>
