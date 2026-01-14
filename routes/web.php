@@ -50,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Get History items page to items table data
     Route::get('/get-items', [HistoryItemsController::class, 'get'])->name('items.get');
 
+    //Create History Data item page 
+    Route::get('/items/history-data', [CreateItemsController::class, 'index'])->name('items.create');
+
     // Data fetch to History page
     Route::get('/items/{item}/history/data', [HistoryItemsController::class, 'fetch'])
         ->name('items.history.data');
