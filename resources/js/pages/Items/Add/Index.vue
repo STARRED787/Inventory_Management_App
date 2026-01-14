@@ -11,7 +11,9 @@ interface Item {
     quantity: number;
     addQuantity?: number; // input for adding quantity
 }
-
+interface ItemsResponse {
+    data: Item[];
+}
 const items = ref<Item[]>([]);
 
 // Flash messages
@@ -20,10 +22,11 @@ const flash = ref<{ success?: string; error?: string }>({});
 // Fetch items from Laravel GET route
 const fetchItems = async () => {
     try {
-        const response = await axios.get<Item[]>('/get-items');
-        items.value = response.data.map((item) => ({
+        const response = await axios.get<ItemsResponse>('/get-items');
+
+        items.value = response.data.data.map((item) => ({
             ...item,
-            addQuantity: 0,
+            deductQuantity: 0,
         }));
     } catch (error) {
         console.error('Failed to fetch items:', error);
@@ -41,10 +44,10 @@ const setFlash = (type: 'success' | 'error', message: string) => {
 const saveAllQuantities = async () => {
     try {
         const updates = items.value
-            .filter(item => item.addQuantity && item.addQuantity > 0)
-            .map(item => ({
+            .filter((item) => item.addQuantity && item.addQuantity > 0)
+            .map((item) => ({
                 id: item.id,
-                addQuantity: item.addQuantity
+                addQuantity: item.addQuantity,
             }));
 
         if (updates.length === 0) {
@@ -55,8 +58,8 @@ const saveAllQuantities = async () => {
         await axios.post('/update-multiple-quantities', { updates });
 
         // Update local quantities
-        updates.forEach(update => {
-            const item = items.value.find(i => i.id === update.id);
+        updates.forEach((update) => {
+            const item = items.value.find((i) => i.id === update.id);
             if (item) {
                 item.quantity += update.addQuantity!;
                 item.addQuantity = 0;
@@ -64,13 +67,11 @@ const saveAllQuantities = async () => {
         });
 
         setFlash('success', 'All quantities updated successfully!');
-
     } catch (error) {
         console.error('Failed to update quantities:', error);
         setFlash('error', 'Failed to update quantities.');
     }
 };
-
 
 onMounted(() => {
     fetchItems();
