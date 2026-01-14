@@ -3,7 +3,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,29 +17,20 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
-            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+            class="flex h-full flex-1 flex-col items-center justify-center p-6"
         >
-            <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-            </div>
             <div
-                class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
+                class="w-full max-w-lg rounded-xl border border-sidebar-border/70 bg-gray-50 p-8 text-center dark:border-sidebar-border dark:bg-gray-800"
             >
-                <PlaceholderPattern />
+                <h1
+                    class="mb-2 text-3xl font-bold text-gray-800 dark:text-gray-100"
+                >
+                    Welcome to the Dashboard
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300">
+                    You can manage your items, view history, and monitor
+                    inventory from here.
+                </p>
             </div>
         </div>
     </AppLayout>
