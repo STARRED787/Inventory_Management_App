@@ -5,6 +5,7 @@ use App\Http\Controllers\CreateItemsController;
 use App\Http\Controllers\DeductItemsController;
 use App\Http\Controllers\HistoryDataItemsController;
 use App\Http\Controllers\HistoryItemsController;
+use App\Http\Controllers\SearchItemsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -58,7 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/items/{item}/history/data', [HistoryDataItemsController::class, 'fetch'])->name('items.history.data');
 
     //Create Search page 
-    Route::get('/items/search', [HistoryItemsController::class, 'index'])->name('items.seacrh');
+    Route::get('/items/search', [SearchItemsController::class, 'index'])->name('items.seacrh');
 });
 
 require __DIR__ . '/settings.php';
