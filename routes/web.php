@@ -20,31 +20,38 @@ Route::get('dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-//Create item page 
-Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
+    //Create item page 
+    Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
 
-//create iteme store table
-Route::post('/items/store', [CreateItemsController::class, 'store'])->name('items.store');
+    //create iteme store table
+    Route::post('/items/store', [CreateItemsController::class, 'store'])->name('items.store');
 
-//Add item page 
-Route::get('/items/add', [AddItemsController::class, 'index'])->name('items.add');
+    //Add item page 
+    Route::get('/items/add', [AddItemsController::class, 'index'])->name('items.add');
 
-//Get add items page to items table data
-Route::get('/get-items', [AddItemsController::class, 'get']);
+    //Get add items page to items table data
+    Route::get('/get-items', [AddItemsController::class, 'get']);
 
-//Get Frontend update quantities data in add iems page
-Route::post('/update-multiple-quantities', [AddItemsController::class, 'updateMultipleQuantities']);
+    //Get Frontend update quantities data in add iems page
+    Route::post('/update-multiple-quantities', [AddItemsController::class, 'updateMultipleQuantities']);
 
-//Deduct item page 
-Route::get('/items/deduct', [DeductItemsController::class, 'index'])->name('items.deduct');
+    //Deduct item page 
+    Route::get('/items/deduct', [DeductItemsController::class, 'index'])->name('items.deduct');
 
-//Get Deduct items page to items table data
-Route::get('/get-items', [DeductItemsController::class, 'get']);
+    //Get Deduct items page to items table data
+    Route::get('/get-items', [DeductItemsController::class, 'get']);
 
-//Get Frontend update quantities data in Deduct iems page
-Route::post('/deduct-multiple-quantities', [DeductItemsController::class, 'updateMultipleQuantities']);
+    //Get Frontend update quantities data in Deduct iems page
+    Route::post('/deduct-multiple-quantities', [DeductItemsController::class, 'updateMultipleQuantities']);
 
-//Create History page 
-Route::get('/items/history', [HistoryItemsController::class, 'index'])->name('items.history');
+    //Create History page 
+    Route::get('/items/history', [HistoryItemsController::class, 'index'])->name('items.history');
+
+    //Get History items page to items table data
+    Route::get('/get-items', [HistoryItemsController::class, 'get'])->name('items.get');
+
+    // Data fetch to History page
+    Route::get('/items/{item}/history/data', [HistoryItemsController::class, 'fetch'])
+        ->name('items.history.data');
 });
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
