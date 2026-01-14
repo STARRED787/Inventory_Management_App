@@ -11,13 +11,21 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { addItem } from '@/page-routes/add-item';
 import { createItem } from '@/page-routes/create-item';
 import { DeductItem } from '@/page-routes/deduct-item';
-import { addItem } from '@/page-routes/add-item';
+import { HistoryItem } from '@/page-routes/history-item';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, PackagePlus,ArrowDownToLine, ArrowUpFromLine,History } from 'lucide-vue-next';
+import {
+    ArrowDownToLine,
+    ArrowUpFromLine,
+    BookOpen,
+    Folder,
+    History,
+    PackagePlus,
+    Search,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -26,20 +34,25 @@ const mainNavItems: NavItem[] = [
         href: createItem(),
         icon: PackagePlus,
     },
-        {
+    {
         title: 'Add Items',
         href: addItem(),
         icon: ArrowDownToLine,
     },
-            {
+    {
         title: 'Deduct Items',
         href: DeductItem(),
         icon: ArrowUpFromLine,
     },
-                {
+    {
         title: 'Item History',
-        href: dashboard(),
+        href: HistoryItem(),
         icon: History,
+    },
+    {
+        title: 'Item Search',
+        href: HistoryItem(),
+        icon: Search,
     },
 ];
 

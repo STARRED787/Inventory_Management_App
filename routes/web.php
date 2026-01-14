@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddItemsController;
 use App\Http\Controllers\CreateItemsController;
 use App\Http\Controllers\DeductItemsController;
+use App\Http\Controllers\HistoryItemsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -18,7 +19,8 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    //Create item page 
+
+//Create item page 
 Route::get('/items/create', [CreateItemsController::class, 'index'])->name('items.create');
 
 //create iteme store table
@@ -41,5 +43,8 @@ Route::get('/get-items', [DeductItemsController::class, 'get']);
 
 //Get Frontend update quantities data in Deduct iems page
 Route::post('/deduct-multiple-quantities', [DeductItemsController::class, 'updateMultipleQuantities']);
+
+//Create History page 
+Route::get('/items/history', [HistoryItemsController::class, 'index'])->name('items.history');
 });
 require __DIR__.'/settings.php';
