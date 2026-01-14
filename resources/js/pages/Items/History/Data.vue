@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { router } from '@inertiajs/vue3';
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 // Props from Inertia (READ ONLY)
 const props = defineProps<{
@@ -24,13 +23,25 @@ const filters = ref({
 });
 
 const fetchHistory = async (url: string | null = null) => {
-    const response = await axios.get(
-        url ?? `/items/${props.item.id}/history/data`,
-        { params: filters.value },
-    );
+    if (!props.item?.id) return;
 
-    transactions.value = response.data.data;
-    pagination.value = response.data.pagination;
+    const endpoint = `/items/${props.item.id}/history/data`;
+    const response = await axios.get(endpoint, { params: filters.value });
+    console.log('Fetching from endpoint:', endpoint);
+    console.log('With filters:', filters.value);
+
+    try {
+        const response = await axios.get(endpoint, { params: filters.value });
+        console.log('Response data:', response.data);
+
+        transactions.value = response.data.data;
+        pagination.value = response.data.pagination;
+    } catch (error: any) {
+        console.error(
+            'Error fetching history:',
+            error.response ?? error.message,
+        );
+    }
 };
 
 // Apply filters
@@ -38,9 +49,22 @@ const applyFilters = () => {
     fetchHistory();
 };
 
-// Initial load
+// Watch for item prop to be available
+watch(
+    () => props.item,
+    (newItem) => {
+        if (newItem?.id) {
+            fetchHistory();
+        }
+    },
+    { immediate: true },
+);
+
+// Initial load - only if item is already available
 onMounted(() => {
-    fetchHistory();
+    if (props.item?.id) {
+        fetchHistory();
+    }
 });
 </script>
 
@@ -48,14 +72,18 @@ onMounted(() => {
     <AppLayout>
         <div class="space-y-6 p-6">
             <!-- Item Summary -->
-            <div class="rounded bg-gray-500 p-4">
+            <div v-if="item" class="rounded bg-gray-500 p-4">
                 <h2 class="text-xl font-semibold">{{ item.name }} History</h2>
                 <p>Unit: {{ item.unit }}</p>
                 <p>Current Stock: {{ item.quantity }}</p>
             </div>
 
-            <!-- Filters -->
-            <div class="flex flex-wrap gap-4">
+            <div v-else class="rounded bg-yellow-500 p-4">
+                Loading item details...
+            </div>
+
+            <!-- Filters (only show when item is loaded) -->
+            <div v-if="item" class="flex flex-wrap gap-4">
                 <select v-model="filters.type" class="border p-2">
                     <option value="">All</option>
                     <option value="add">Add</option>
@@ -79,63 +107,66 @@ onMounted(() => {
             </div>
 
             <!-- History Table -->
-            <table class="w-full border">
-                <thead class="bg-gray-500">
-                    <tr>
-                        <th class="border p-2">Date</th>
-                        <th class="border p-2">Action</th>
-                        <th class="border p-2">Quantity</th>
-                        <th class="border p-2">Balance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="tx in transactions" :key="tx.id">
-                        <td class="border p-2">{{ tx.created_at }}</td>
+            <div v-if="item">
+                <table class="w-full border">
+                    <thead class="bg-gray-500">
+                        <tr>
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Action</th>
+                            <th class="border p-2">Quantity</th>
+                            <th class="border p-2">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="tx in transactions" :key="tx.id">
+                            <td class="border p-2">{{ tx.created_at }}</td>
 
-                        <td class="border p-2">
-                            <span
-                                :class="
-                                    tx.type === 'add'
-                                        ? 'font-semibold text-green-600'
-                                        : 'font-semibold text-red-600'
-                                "
-                            >
-                                {{
-                                    tx.type === 'add'
-                                        ? '➕ Added'
-                                        : '➖ Deducted'
-                                }}
-                            </span>
-                        </td>
+                            <td class="border p-2">
+                                <span
+                                    :class="
+                                        tx.type === 'add'
+                                            ? 'font-semibold text-green-600'
+                                            : 'font-semibold text-red-600'
+                                    "
+                                >
+                                    {{
+                                        tx.type === 'add'
+                                            ? '➕ Added'
+                                            : '➖ Deducted'
+                                    }}
+                                </span>
+                            </td>
 
-                        <td class="border p-2">
-                            {{ tx.type === 'add' ? '+' : '-' }}{{ tx.quantity }}
-                        </td>
+                            <td class="border p-2">
+                                {{ tx.type === 'add' ? '+' : '-'
+                                }}{{ tx.quantity }}
+                            </td>
 
-                        <td class="border p-2 font-semibold">
-                            {{ tx.balance }}
-                        </td>
-                    </tr>
+                            <td class="border p-2 font-semibold">
+                                {{ tx.balance }}
+                            </td>
+                        </tr>
 
-                    <tr v-if="transactions.length === 0">
-                        <td colspan="4" class="p-4 text-center">
-                            No history found
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        <tr v-if="transactions.length === 0">
+                            <td colspan="4" class="p-4 text-center">
+                                No history found
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <!-- Pagination -->
-            <div class="flex gap-2">
-                <button
-                    v-for="link in pagination.links"
-                    :key="link.label"
-                    v-html="link.label"
-                    :disabled="!link.url"
-                    @click="router.get(link.url)"
-                    class="rounded border px-3 py-1"
-                    :class="{ 'bg-gray-300': link.active }"
-                />
+                <!-- Pagination -->
+                <div class="flex gap-2">
+                    <button
+                        v-for="link in pagination.links"
+                        :key="link.label"
+                        v-html="link.label"
+                        :disabled="!link.url"
+                        @click="fetchHistory(link.url)"
+                        class="rounded border px-3 py-1"
+                        :class="{ 'bg-gray-300': link.active }"
+                    />
+                </div>
             </div>
         </div>
     </AppLayout>

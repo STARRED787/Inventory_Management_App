@@ -44,7 +44,9 @@ onMounted(() => {
                         <td class="border p-2">
                             <button
                                 @click="
-                                    router.get(`/items/history?item=${item.id}`)
+                                    router.get(
+                                        `/items/history-data?item_id=${item.id}`,
+                                    )
                                 "
                                 class="rounded bg-blue-600 px-3 py-1 text-white"
                             >

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddItemsController;
 use App\Http\Controllers\CreateItemsController;
 use App\Http\Controllers\DeductItemsController;
+use App\Http\Controllers\HistoryDataItemsController;
 use App\Http\Controllers\HistoryItemsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -51,10 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/get-items', [HistoryItemsController::class, 'get'])->name('items.get');
 
     //Create History Data item page 
-    Route::get('/items/history-data', [CreateItemsController::class, 'index'])->name('items.create');
+    Route::get('/items/history-data', [HistoryDataItemsController::class, 'index'])->name('items.history-data');
 
     // Data fetch to History page
-    Route::get('/items/{item}/history/data', [HistoryItemsController::class, 'fetch'])
-        ->name('items.history.data');
+    Route::get('/items/{item}/history/data', [HistoryDataItemsController::class, 'fetch'])->name('items.history.data');
 });
 require __DIR__ . '/settings.php';
