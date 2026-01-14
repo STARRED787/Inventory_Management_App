@@ -60,6 +60,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Create Search page 
     Route::get('/items/search', [SearchItemsController::class, 'index'])->name('items.seacrh');
+
+    // Data fetch to Search page
+    Route::get('/items/search/data', [SearchItemsController::class, 'fetch'])
+        ->name('items.search.data');
 });
 
 require __DIR__ . '/settings.php';

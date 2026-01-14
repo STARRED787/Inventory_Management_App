@@ -1,72 +1,71 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { HistoryItem } from '@/page-routes/history-item';
-import { router } from '@inertiajs/vue3';
 import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-const goBack = () => {
-    router.visit(HistoryItem());
-};
+const search = ref('');
+const items = ref<any[]>([]);
+const loading = ref(false);
 
-// Props from Inertia (READ ONLY)
-const props = defineProps<{
-    item: any;
-    transactions?: any[];
-    pagination?: any;
-}>();
+const fetchItems = async () => {
+    loading.value = true;
 
-// Local reactive state (editable)
-const transactions = ref<any[]>(props.transactions ?? []);
-const pagination = ref<any>(props.pagination ?? {});
+    try {
+        const response = await axios.get('/items/search/data', {
+            params: { search: search.value },
+        });
 
-// Filters
-const filters = ref({
-    type: '',
-    from: '',
-    to: '',
-    last_7_days: false,
-});
-const fetchHistory = async (url: string | null = null) => {
-    if (!props.item?.id) return;
-
-    const endpoint = url ?? `/items/${props.item.id}/history/data`;
-
-    const response = await axios.get(endpoint, {
-        params: filters.value,
-    });
-
-    transactions.value = response.data.data;
-    pagination.value = response.data.pagination;
-};
-
-// Apply filters
-const applyFilters = () => {
-    fetchHistory();
-};
-
-// Watch for item prop to be available
-watch(
-    () => props.item,
-    (newItem) => {
-        if (newItem?.id) {
-            fetchHistory();
-        }
-    },
-    { immediate: true },
-);
-
-// Initial load - only if item is already available
-onMounted(() => {
-    if (props.item?.id) {
-        fetchHistory();
+        items.value = response.data.data;
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loading.value = false;
     }
+};
+
+// Auto search while typing
+watch(search, () => {
+    fetchItems();
 });
 </script>
 
 <template>
     <AppLayout>
-        <div class="space-y-6 p-6"></div>
-        <h2>This</h2>
+        <div class="space-y-6 p-6">
+            <!-- Search Bar -->
+            <input
+                v-model="search"
+                type="text"
+                placeholder="Search items..."
+                class="w-full rounded border p-3"
+            />
+
+            <!-- Loading -->
+            <p v-if="loading" class="text-gray-500">Searching...</p>
+
+            <!-- Cards -->
+            <div
+                v-if="items.length"
+                class="grid grid-cols-1 gap-4 md:grid-cols-3"
+            >
+                <div
+                    v-for="item in items"
+                    :key="item.id"
+                    class="rounded bg-gray-500 p-4 shadow"
+                >
+                    <h3 class="text-lg font-semibold">{{ item.name }}</h3>
+                    <p>Unit: {{ item.unit }}</p>
+                    <p class="font-semibold">Stock: {{ item.quantity }}</p>
+                </div>
+            </div>
+
+            <!-- No Data -->
+            <p
+                v-if="!loading && items.length === 0"
+                class="text-center text-gray-500"
+            >
+                No items found
+            </p>
+        </div>
     </AppLayout>
 </template>
